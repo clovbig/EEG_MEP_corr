@@ -5,6 +5,7 @@ Description: Check for possible correlation between EEG_phase and MEP
 """
 import mne
 import os
+import pickle
 import numpy as np
 from scipy.io import loadmat
 import matplotlib.pyplot as plt
@@ -18,17 +19,18 @@ if __name__ == '__main__':
     # Load data
     data_dir = 'C:\\Users\\bigoni\\Data\\TMS-EEG'
     sub_id = 'WP11_002'
-    block = 'T1'
+    t_point = 'T1'
     sequence = 'A1'
     pulse = 'SP'
     # Already epoched and cleaned EEG data (epochs between -0.2 and 0.5s where 0 is TMS pulse)
-    epochs_eeg = mne.io.read_epochs_eeglab(os.path.join(data_dir, sub_id, 'EEG', block, f'{pulse}_{sub_id}'
-                                                        f'_{block}_ROI.set'))   # trials x channels x samples
+    epochs_eeg = mne.io.read_epochs_eeglab(os.path.join(data_dir, sub_id, 'EEG', t_point, f'{pulse}_{sub_id}'
+                                                        f'_{t_point}_ROI.set'))   # trials x channels x samples
     fs_eeg = epochs_eeg.info['sfreq']
     data_epochs_eeg = epochs_eeg.get_data()     # trials x channels x samples
     # TODO: concatenate emg data for single pulse/double pulse like EEG data
-    epochs_emg = loadmat(os.path.join(data_dir, sub_id, 'EMG', block, 'Cleaned Data', f'TiMeS_{sub_id}_{block}_'
-                                      f'{sequence}_GUI_Results.mat'))
+    epochs_emg = pickle.load(open(os.path.join(data_dir, sub_id, 'EMG', t_point, f'EMG_data_{pulse}.pkl'), "rb"))
+    # epochs_emg = loadmat(os.path.join(data_dir, sub_id, 'EMG', block, 'Cleaned Data', f'TiMeS_{sub_id}_{block}_'
+    #                                   f'{sequence}_GUI_Results.mat'))
     # Variable definition
     fs_emg = 5000  # Hz
     f_band_emg = [2, 250]
@@ -38,7 +40,7 @@ if __name__ == '__main__':
     emg_ch = 'FDI'
     eeg_ch = 'C4'
     # 1. Pre-process EMG
-    meps = epochs_emg['EMGdata']['MEPVppValues'][0][0][:, emg_chs[emg_ch]]
+    meps = epochs_emg.mep[:, emg_chs[emg_ch]]
     # a. epoch for mep and remove artifacts trials
     epochs_mep = ma.divide_in_epochs(epochs_emg, fs_emg, 1, 0.02, 0.04)
     _, idx_remove_1 = ma.remove_artifacts_power(epochs_mep[:, emg_chs[emg_ch], :])
@@ -46,7 +48,8 @@ if __name__ == '__main__':
     epochs_baseline_emg = ma.divide_in_epochs(epochs_emg, fs_emg, 1, -0.025, -0.005)
     _, idx_remove_2 = ma.remove_artifacts_corr(epochs_baseline_emg[:, emg_chs[emg_ch], :])
     # c. additional trials to remove according to previous pre-processing
-    idx_remove_3 = epochs_emg['SettingsRejection'][emg_chs[emg_ch]]     # FIXME: check this...
+    idx_remove_3 = epochs_emg.rej_results.C3_mep_amp_decision[:, emg_chs[emg_ch]]   # FIXME: check this...
+
 
     [emg_freq, emg_spectrum] = sig.fft(epochs_baseline_emg, fs_emg)
     emg_power = sig.compute_psd(emg_spectrum, emg_freq, f_band_emg[0], f_band_emg[1])

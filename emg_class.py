@@ -42,17 +42,17 @@ class SettingsMeasurement:
         self.notch_filt = []
 
     def add_data(self, settings, trials, pulse):
-        self.dc_offset_start_time.append(settings['DCOffsetStartTime'][0][0][trials[trials == pulse]])
-        self.dc_offset_stop_time.append(settings['DCOffsetStopTime'][0][0][trials[trials == pulse]])
-        self.emg_background_Start_time.append(settings['EMGbackgroundStartTime'][0][0][trials[trials == pulse]])
-        self.emg_latency_sd.append(settings['EMGLatencySDvalue'][0][0][trials[trials == pulse]])
-        self.emg_module_offset.append(settings['EMGmoduleOffset'][0][0][trials[trials == pulse]])
-        self.cutoff_freq_high.append(settings['cutOffFreqHigh'][0][0][trials[trials == pulse]])
-        self.cutoff_freq_low.append(settings['cutOffFreqLow'][0][0][trials[trials == pulse]])
-        self.notch_freq.append(settings['notchFreq'][0][0][trials[trials == pulse]])
-        self.high_pass_filt.append(settings['highPassOn'][0][0][trials[trials == pulse]])
-        self.low_pass_filt.append(settings['lowPassOn'][0][0][trials[trials == pulse]])
-        self.notch_filt.append(settings['notchOn'][0][0][trials[trials == pulse]])
+        self.dc_offset_start_time.append(settings['DCOffsetStartTime'][0][0][trials == pulse])
+        self.dc_offset_stop_time.append(settings['DCOffsetStopTime'][0][0][trials == pulse])
+        self.emg_background_Start_time.append(settings['EMGbackgroundStartTime'][0][0][trials == pulse])
+        self.emg_latency_sd.append(settings['EMGLatencySDvalue'][0][0][trials == pulse])
+        self.emg_module_offset.append(settings['EMGmoduleOffset'][0][0][trials == pulse])
+        self.cutoff_freq_high.append(settings['cutOffFreqHigh'][0][0][trials == pulse])
+        self.cutoff_freq_low.append(settings['cutOffFreqLow'][0][0][trials == pulse])
+        self.notch_freq.append(settings['notchFreq'][0][0][trials == pulse])
+        self.high_pass_filt.append(settings['highPassOn'][0][0][trials == pulse])
+        self.low_pass_filt.append(settings['lowPassOn'][0][0][trials == pulse])
+        self.notch_filt.append(settings['notchOn'][0][0][trials == pulse])
 
 
 class SettingsRejection:
@@ -87,41 +87,99 @@ class SettingsRejection:
         self.baseline_threshold_per_trial_multipl = []
 
     def add_data(self, settings, trials, pulse):
-        self.baseline_warning.append(settings['BaselineWarningOn'][0][0][trials[trials == pulse]])
-        self.baseline_bef_tms_warning.append(settings['BaselineBefTMSWarningOn'][0][0][trials[trials == pulse]])
-        self.mep_noise_check.append(settings['MEPNoiseCheckOn'][0][0][trials[trials == pulse]])
-        self.emg_noise_check_after_mep.append(settings['EMGNoiseCheckAfterMEP'][0][0][trials[trials == pulse]])
-        self.mep_vpp_check.append(settings['MEPVppCheckOn'][0][0][trials[trials == pulse]])
-        self.baseline_threshold.append(settings['BaselineThreshold'][0][0][trials[trials == pulse]])
-        self.baseline_correction_start.append(settings['baselineCorrectionStart'][0][0][trials[trials == pulse]])
-        self.baseline_correction_stop.append(settings['baselineCorrectionStop'][0][0][trials[trials == pulse]])
-        self.baseline_bef_tms_threshold.append(settings['BaselineBefTMSthreshold'][0][0][trials[trials == pulse]])
-        self.baseline_bef_tms_start.append(settings['BaselineBefTMSstart'][0][0][trials[trials == pulse]])
-        self.baseline_bef_tms_stop.append(settings['BaselineBefTMSstop'][0][0][trials[trials == pulse]])
-        self.mep_noise_threshold.append(settings['MEPnoiseThreshold'][0][0][trials[trials == pulse]])
-        self.mep_noise_checktime_offset_start.append(settings['MEPnoiseCheckTimeOffsetStart'][0][0][trials[trials == pulse]])
-        self.mep_noise_checktime_offset_stop.append(settings['MEPnoiseCheckTimeOffsetStop'][0][0][trials[trials == pulse]])
-        self.emg_after_mep_noise_threshold.append(settings['EMGafterMEPnoisethreshold'][0][0][trials[trials == pulse]])
-        self.emg_after_mep_noise_time_offset_start.append(
-            settings['EMGNoiseAferMEPtimeOffsetStart'][0][0][trials[trials == pulse]])
-        self.emg_after_mep_noise_time_offset_stop.append(
-            settings['EMGNoiseAferMEPtimeOffsetStop'][0][0][trials[trials == pulse]])
-        self.mep_pp_threshold.append(settings['MEPVppThreshold'][0][0][trials[trials == pulse]])
-        self.mep_checktime_offset_start.append(settings['MEPcheckTimeOffsetStart'][0][0][:, trials[trials == pulse]])
-        self.mep_checktime_offset_stop.append(settings['MEPchecktTimeOffsetStop'][0][0][:, trials[trials == pulse]])
-        self.important_ch_for_reject.append(settings['ImportantChForReject'][0][0][trials[trials == pulse]])
-        self.std_baseline_value.append(settings['stdBaselineValue'][0][0][trials[trials == pulse], :])
-        self.threshold_type.append([settings['ThresholdType'][0][0][0]]*len(trials[trials == pulse]))
-        self.mep_threshold_per_trial_multipl.append(
-            settings['MEPVppThresholdPerTrialMultipl'][0][0][trials[trials == pulse], :])
-        self.mep_noise_threshold_per_trial_multipl.append(
-            settings['MEPnoisethresholdPerTrialMultipl'][0][0][trials[trials == pulse], :])
-        self.emg_after_mep_noise_threshold_per_trial_multipl.append(
-            settings['EMGafterMEPnoisethresholdPerTrialMultipl'][0][0][trials[trials == pulse], :])
-        self.baseline_bef_tms_threshold_per_trial_multipl.append(
-            settings['BaselineBefTMSthresholdPerTrialMultipl'][0][0][trials[trials == pulse], :])
-        self.baseline_threshold_per_trial_multipl.append(
-            settings['BaselineThresholdPerTrialMultipl'][0][0][trials[trials == pulse], :])
+        if len(trials) == len(settings['BaselineWarningOn'][0][0]):
+            self.baseline_warning = np.concatenate(
+                (self.baseline_warning, settings['BaselineWarningOn'][0][0][trials == pulse]))
+            self.baseline_bef_tms_warning = np.concatenate(
+                (self.baseline_bef_tms_warning, settings['BaselineBefTMSWarningOn'][0][0][trials == pulse]))
+            self.mep_noise_check = np.concatenate(
+                (self.mep_noise_check, settings['MEPNoiseCheckOn'][0][0][trials == pulse]))
+            self.emg_noise_check_after_mep = np.concatenate(
+                (self.emg_noise_check_after_mep, settings['EMGNoiseCheckAfterMEP'][0][0][trials == pulse]))
+            self.mep_vpp_check = np.concatenate(
+                (self.mep_vpp_check, settings['MEPVppCheckOn'][0][0][trials == pulse]))
+            self.baseline_threshold = np.concatenate(
+                (self.baseline_threshold, settings['BaselineThreshold'][0][0][trials == pulse]))
+            self.baseline_correction_start = np.concatenate(
+                (self.baseline_correction_start, settings['baselineCorrectionStart'][0][0][trials == pulse]))
+            self.baseline_correction_stop = np.concatenate(
+                (self.baseline_correction_stop, settings['baselineCorrectionStop'][0][0][trials == pulse]))
+            self.baseline_bef_tms_threshold = np.concatenate(
+                (self.baseline_bef_tms_threshold, settings['BaselineBefTMSthreshold'][0][0][trials == pulse]))
+            self.baseline_bef_tms_start = np.concatenate(
+                (self.baseline_bef_tms_start, settings['BaselineBefTMSstart'][0][0][trials == pulse]))
+            self.baseline_bef_tms_stop = np.concatenate(
+                (self.baseline_bef_tms_stop, settings['BaselineBefTMSstop'][0][0][trials == pulse]))
+            self.mep_noise_threshold = np.concatenate(
+                (self.mep_noise_threshold, settings['MEPnoiseThreshold'][0][0][trials == pulse]))
+            self.mep_noise_checktime_offset_start = np.concatenate(
+                (self.mep_noise_checktime_offset_start, settings['MEPnoiseCheckTimeOffsetStart'][0][0][trials == pulse]))
+            self.mep_noise_checktime_offset_stop = np.concatenate(
+                (self.mep_noise_checktime_offset_stop, settings['MEPnoiseCheckTimeOffsetStop'][0][0][trials == pulse]))
+            self.emg_after_mep_noise_threshold = np.concatenate(
+                (self.emg_after_mep_noise_threshold, settings['EMGafterMEPnoisethreshold'][0][0][trials == pulse]))
+            self.emg_after_mep_noise_time_offset_start = np.concatenate(
+                (self.emg_after_mep_noise_time_offset_start,
+                 settings['EMGNoiseAferMEPtimeOffsetStart'][0][0][trials == pulse]))
+            self.emg_after_mep_noise_time_offset_stop = np.concatenate(
+                (self.emg_after_mep_noise_time_offset_stop,
+                 settings['EMGNoiseAferMEPtimeOffsetStop'][0][0][trials == pulse]))
+            self.mep_pp_threshold = np.concatenate(
+                (self.mep_pp_threshold, settings['MEPVppThreshold'][0][0][trials == pulse]))
+            self.mep_checktime_offset_start.append(settings['MEPcheckTimeOffsetStart'][0][0])
+            self.mep_checktime_offset_stop.append(settings['MEPchecktTimeOffsetStop'][0][0])
+            self.important_ch_for_reject = np.concatenate(
+                (self.important_ch_for_reject, settings['ImportantChForReject'][0][0][trials == pulse]))
+            self.std_baseline_value.append(settings['stdBaselineValue'][0][0])
+            self.threshold_type.append([settings['ThresholdType'][0][0][0]]*len(trials[trials == pulse]))
+            self.mep_threshold_per_trial_multipl.append(settings['MEPVppThresholdPerTrialMultipl'][0][0])
+            self.mep_noise_threshold_per_trial_multipl.append(settings['MEPnoisethresholdPerTrialMultipl'][0][0])
+            self.emg_after_mep_noise_threshold_per_trial_multipl.append(settings[
+                'EMGafterMEPnoisethresholdPerTrialMultipl'][0][0])
+            self.baseline_bef_tms_threshold_per_trial_multipl.append(
+                settings['BaselineBefTMSthresholdPerTrialMultipl'][0][0])
+            self.baseline_threshold_per_trial_multipl.append(settings['BaselineThresholdPerTrialMultipl'][0][0])
+        else:
+            print('Difference in trials length')
+            pass
+            # FIXME do sotming and send error
+
+    def set_data(self, settings, trials, pulse):
+        if len(trials) == len(settings['BaselineWarningOn'][0][0]):
+            self.baseline_warning = settings['BaselineWarningOn'][0][0][trials == pulse]
+            self.baseline_bef_tms_warning = settings['BaselineBefTMSWarningOn'][0][0][trials == pulse]
+            self.mep_noise_check = settings['MEPNoiseCheckOn'][0][0][trials == pulse]
+            self.emg_noise_check_after_mep = settings['EMGNoiseCheckAfterMEP'][0][0][trials == pulse]
+            self.mep_vpp_check = settings['MEPVppCheckOn'][0][0][trials == pulse]
+            self.baseline_threshold = settings['BaselineThreshold'][0][0][trials == pulse]
+            self.baseline_correction_start = settings['baselineCorrectionStart'][0][0][trials == pulse]
+            self.baseline_correction_stop = settings['baselineCorrectionStop'][0][0][trials == pulse]
+            self.baseline_bef_tms_threshold = settings['BaselineBefTMSthreshold'][0][0][trials == pulse]
+            self.baseline_bef_tms_start = settings['BaselineBefTMSstart'][0][0][trials == pulse]
+            self.baseline_bef_tms_stop = settings['BaselineBefTMSstop'][0][0][trials == pulse]
+            self.mep_noise_threshold = settings['MEPnoiseThreshold'][0][0][trials == pulse]
+            self.mep_noise_checktime_offset_start = settings['MEPnoiseCheckTimeOffsetStart'][0][0][trials == pulse]
+            self.mep_noise_checktime_offset_stop = settings['MEPnoiseCheckTimeOffsetStop'][0][0][trials == pulse]
+            self.emg_after_mep_noise_threshold = settings['EMGafterMEPnoisethreshold'][0][0][trials == pulse]
+            self.emg_after_mep_noise_time_offset_start = settings['EMGNoiseAferMEPtimeOffsetStart'][0][0][trials == pulse]
+            self.emg_after_mep_noise_time_offset_stop = settings['EMGNoiseAferMEPtimeOffsetStop'][0][0][trials == pulse]
+            self.mep_pp_threshold = settings['MEPVppThreshold'][0][0][trials == pulse]
+            self.mep_checktime_offset_start = list(settings['MEPcheckTimeOffsetStart'][0][0])
+            self.mep_checktime_offset_stop = list(settings['MEPchecktTimeOffsetStop'][0][0])
+            self.important_ch_for_reject = settings['ImportantChForReject'][0][0][trials == pulse]
+            self.std_baseline_value = list(settings['stdBaselineValue'][0][0])
+            self.threshold_type.append([settings['ThresholdType'][0][0][0]]*len(trials[trials == pulse]))
+            self.mep_threshold_per_trial_multipl = list(settings['MEPVppThresholdPerTrialMultipl'][0][0])
+            self.mep_noise_threshold_per_trial_multipl = list(settings['MEPnoisethresholdPerTrialMultipl'][0][0])
+            self.emg_after_mep_noise_threshold_per_trial_multipl = list(
+                settings['EMGafterMEPnoisethresholdPerTrialMultipl'][0][0])
+            self.baseline_bef_tms_threshold_per_trial_multipl = list(
+                settings['BaselineBefTMSthresholdPerTrialMultipl'][0][0])
+            self.baseline_threshold_per_trial_multipl = list(settings['BaselineThresholdPerTrialMultipl'][0][0])
+        else:
+            print('Difference in trials length')
+            pass
+            # FIXME do sotming and send error
 
 
 class ResultsRejection:
@@ -143,25 +201,59 @@ class ResultsRejection:
         self.C5_noise_after_mep_value = []
         self.C5_noise_after_mep_decision = []
 
-    def add_data(self, res, trials, pulse):
-        self.discard_criteria.append(res['discardCriteria'][0][0][trials[trials == pulse]])
-        self.channels_for_rejection.append(res['channelsForRejection'][0][0][trials[trials == pulse]])
-        self.rej_results_per_ch_chosen_criteria.append(
-            res['rejectionResultsPerChannelChosenCriteria'][0][0][trials[trials == pulse], :])
-        self.rej_results_per_ch_all_criteria.append(
+    def set_data(self, res, trials, pulse):
+        self.discard_criteria = (res['discardCriteria'][0][0][trials[trials == pulse]])
+        self.channels_for_rejection = (res['channelsForRejection'][0][0][trials[trials == pulse]])
+        self.rej_results_per_ch_chosen_criteria = res['rejectionResultsPerChannelChosenCriteria'][0][0][
+                                                  trials[trials == pulse], :]
+        self.rej_results_per_ch_all_criteria = (
             res['rejectionResultsPerChannelAllCriteria'][0][0][trials[trials == pulse], :])
-        self.rej_final_auto.append(res['rejectFinalAuto'][0][0][trials[trials == pulse]])
-        self.rej_final_manual.append(res['rejectFinalManual'][0][0][trials[trials == pulse]])
-        self.C1_baseline_value.append(res['C1_baseline_values'][0][0][trials[trials == pulse], :])
-        self.C1_baseline_decision.append(res['C1_baseline_decision'][0][0][trials[trials == pulse], :])
-        self.C2_baseline_bef_tms_value.append(res['C2_baselineBefTMS_values'][0][0][trials[trials == pulse], :])
-        self.C2_baseline_bef_tms_decision.append(res['C2_baselineBefTMS_decision'][0][0][trials[trials == pulse], :])
-        self.C3_mep_amp_value.append(res['C3_MEPamp_values'][0][0][trials[trials == pulse], :])
-        self.C3_mep_amp_decision.append(res['C3_MEPamp_decision'][0][0][trials[trials == pulse], :])
-        self.C4_noise_bef_mep_value.append(res['C4_noiseBefMEP_values'][0][0][trials[trials == pulse], :])
-        self.C4_noise_bef_mep_decision.append(res['C4_noiseBefMEP_decision'][0][0][trials[trials == pulse], :])
-        self.C5_noise_after_mep_value.append(res['C5_noiseAfterMEP_values'][0][0][trials[trials == pulse], :])
-        self.C5_noise_after_mep_decision.append(res['C5_noiseAfterMEP_decision'][0][0][trials[trials == pulse], :])
+        self.rej_final_auto = (res['rejectFinalAuto'][0][0][trials[trials == pulse]])
+        self.rej_final_manual = (res['rejectFinalManual'][0][0][trials[trials == pulse]])
+        self.C1_baseline_value = (res['C1_baseline_values'][0][0][trials[trials == pulse], :])
+        self.C1_baseline_decision = (res['C1_baseline_decision'][0][0][trials[trials == pulse], :])
+        self.C2_baseline_bef_tms_value = (res['C2_baselineBefTMS_values'][0][0][trials[trials == pulse], :])
+        self.C2_baseline_bef_tms_decision = (res['C2_baselineBefTMS_decision'][0][0][trials[trials == pulse], :])
+        self.C3_mep_amp_value = (res['C3_MEPamp_values'][0][0][trials[trials == pulse], :])
+        self.C3_mep_amp_decision = (res['C3_MEPamp_decision'][0][0][trials[trials == pulse], :])
+        self.C4_noise_bef_mep_value = (res['C4_noiseBefMEP_values'][0][0][trials[trials == pulse], :])
+        self.C4_noise_bef_mep_decision = (res['C4_noiseBefMEP_decision'][0][0][trials[trials == pulse], :])
+        self.C5_noise_after_mep_value = (res['C5_noiseAfterMEP_values'][0][0][trials[trials == pulse], :])
+        self.C5_noise_after_mep_decision = (res['C5_noiseAfterMEP_decision'][0][0][trials[trials == pulse], :])
+
+    def add_data(self, res, trials, pulse):
+        self.discard_criteria = np.concatenate((self.discard_criteria, res['discardCriteria'][0][0][trials[
+            trials == pulse]]))
+        self.channels_for_rejection = np.concatenate((self.channels_for_rejection,
+                                                      res['channelsForRejection'][0][0][trials[trials == pulse]]))
+        self.rej_results_per_ch_chosen_criteria = np.concatenate((self.rej_results_per_ch_chosen_criteria,
+            res['rejectionResultsPerChannelChosenCriteria'][0][0][trials[trials == pulse], :]))
+        self.rej_results_per_ch_all_criteria = np.concatenate((self.rej_results_per_ch_all_criteria,
+            res['rejectionResultsPerChannelAllCriteria'][0][0][trials[trials == pulse], :]))
+        self.rej_final_auto = np.concatenate(
+            (self.rej_final_auto, res['rejectFinalAuto'][0][0][trials[trials == pulse]]))
+        self.rej_final_manual = np.concatenate(
+            (self.rej_final_manual, res['rejectFinalManual'][0][0][trials[trials == pulse]]))
+        self.C1_baseline_value = np.concatenate(
+            (self.C1_baseline_value, res['C1_baseline_values'][0][0][trials[trials == pulse], :]))
+        self.C1_baseline_decision = np.concatenate(
+            (self.C1_baseline_decision, res['C1_baseline_decision'][0][0][trials[trials == pulse], :]))
+        self.C2_baseline_bef_tms_value = np.concatenate(
+            (self.C2_baseline_bef_tms_value, res['C2_baselineBefTMS_values'][0][0][trials[trials == pulse], :]))
+        self.C2_baseline_bef_tms_decision = np.concatenate(
+            (self.C2_baseline_bef_tms_decision, res['C2_baselineBefTMS_decision'][0][0][trials[trials == pulse], :]))
+        self.C3_mep_amp_value  = np.concatenate(
+            (self.C3_mep_amp_value, res['C3_MEPamp_values'][0][0][trials[trials == pulse], :]))
+        self.C3_mep_amp_decision = np.concatenate(
+            (self.C3_mep_amp_decision, res['C3_MEPamp_decision'][0][0][trials[trials == pulse], :]))
+        self.C4_noise_bef_mep_value = np.concatenate(
+            (self.C4_noise_bef_mep_value, res['C4_noiseBefMEP_values'][0][0][trials[trials == pulse], :]))
+        self.C4_noise_bef_mep_decision = np.concatenate(
+            (self.C4_noise_bef_mep_decision, res['C4_noiseBefMEP_decision'][0][0][trials[trials == pulse], :]))
+        self.C5_noise_after_mep_value = np.concatenate(
+            (self.C5_noise_after_mep_value, res['C5_noiseAfterMEP_values'][0][0][trials[trials == pulse], :]))
+        self.C5_noise_after_mep_decision = np.concatenate(
+            (self.C5_noise_after_mep_decision, res['C5_noiseAfterMEP_decision'][0][0][trials[trials == pulse], :]))
 
 
 class EMG:
@@ -200,21 +292,21 @@ class EMG:
 
     def set_emg_data(self, data, trials):
         self.mep = data['MEPVppValues'][0][0][trials[trials == self.pulse_no], :]
-        self.emg_module_values = data['EMGModuleValues'][0][0][trials[trials == self.pulse_no], :]
-        self.emg_rms_values = data['EMGRmsValues'][0][0][trials[trials == self.pulse_no], :]
-        self.emg_latency_values = data['EMGLatencyValues'][0][0][trials[trials == self.pulse_no], :]
-        self.std_baseline_values = data['stdBaselineValue'][0][0][trials[trials == self.pulse_no], :]
+        self.emg_module_values = data['EMGModuleValues'][0][0][trials == self.pulse_no, :]
+        self.emg_rms_values = data['EMGRmsValues'][0][0][trials == self.pulse_no, :]
+        self.emg_latency_values = data['EMGLatencyValues'][0][0][trials == self.pulse_no, :]
+        self.std_baseline_values = data['stdBaselineValue'][0][0][trials == self.pulse_no, :]
 
     def add_emg_data(self, data, trials):
-        self.mep = np.concatenate((self.mep, data['MEPVppValues'][0][0][trials[trials == self.pulse_no], :]), axis=0)
+        self.mep = np.concatenate((self.mep, data['MEPVppValues'][0][0][trials == self.pulse_no, :]), axis=0)
         self.emg_module_values = np.concatenate(
-            (self.emg_module_values, data['EMGModuleValues'][0][0][trials[trials == self.pulse_no], :]), axis=0)
+            (self.emg_module_values, data['EMGModuleValues'][0][0][trials == self.pulse_no, :]), axis=0)
         self.emg_rms_values = np.concatenate(
-            (self.emg_module_values, data['EMGRmsValues'][0][0][trials[trials == self.pulse_no], :]), axis=0)
+            (self.emg_module_values, data['EMGRmsValues'][0][0][trials == self.pulse_no, :]), axis=0)
         self.emg_latency_values = np.concatenate(
-            (self.emg_module_values, data['EMGLatencyValues'][0][0][trials[trials == self.pulse_no], :]), axis=0)
+            (self.emg_module_values, data['EMGLatencyValues'][0][0][trials == self.pulse_no, :]), axis=0)
         self.std_baseline_values = np.concatenate(
-            (self.emg_module_values, data['stdBaselineValue'][0][0][trials[trials == self.pulse_no], :]), axis=0)
+            (self.emg_module_values, data['stdBaselineValue'][0][0][trials == self.pulse_no, :]), axis=0)
 
     # def add_trial(self, epochs, block_no, trial_no):
     #     # self.settings.add_data(epochs['SettingsGeneral'])
@@ -238,29 +330,30 @@ class EMG:
 
     def add_trials(self, epochs_emg, trials, block_no):
         if self.seq == 0:
-            self.processed_data = epochs_emg['AllProcessedDat'][:, :, trials[trials == self.pulse_no]]
+            self.processed_data = epochs_emg['AllProcessedDat'][:, :, trials == self.pulse_no]
             # samples x ch x  trials
-            self.original_data = epochs_emg['AllOriginalDat'][:, :, trials[trials == self.pulse_no]]
+            self.original_data = epochs_emg['AllOriginalDat'][:, :, [trials == self.pulse_no][0]]
             # samples x ch x trials
             self.set_emg_data(epochs_emg['EMGdata'], trials)
             self.settings_measurement.add_data(epochs_emg['SettingsMeasurement'], trials, self.pulse)
-            self.settings_rejection.add_data(epochs_emg['SettingsRejection'], trials, self.pulse_no)
-            self.rej_results.add_data(epochs_emg['RejectionResults'], trials, self.pulse_no)
+            self.settings_rejection.set_data(epochs_emg['SettingsRejection'], trials, self.pulse_no)
+            self.rej_results.set_data(epochs_emg['RejectionResults'], trials, self.pulse_no)
         else:
             self.processed_data = np.concatenate(
-                (self.processed_data, epochs_emg['AllProcessedDat'][:, :, trials[trials == self.pulse_no]]), axis=2)
+                (self.processed_data, epochs_emg['AllProcessedDat'][:, :, trials == self.pulse_no]), axis=2)
             self.original_data = np.concatenate(
-                (self.original_data, epochs_emg['AllOriginalDat'][:, :, trials[trials == self.pulse_no]]), axis=2)
+                (self.original_data, epochs_emg['AllOriginalDat'][:, :, trials == self.pulse_no]), axis=2)
             self.add_emg_data(epochs_emg['EMGdata'], trials)
             self.settings_measurement.add_data(epochs_emg['SettingsMeasurement'], trials, self.pulse)
             self.settings_rejection.add_data(epochs_emg['SettingsRejection'], trials, self.pulse_no)
             self.rej_results.add_data(epochs_emg['RejectionResults'], trials, self.pulse_no)
 
         self.seq += 1
-        trial_no = trials[trials == self.pulse_no]
-        self.trials.append(trial_no)
+        trial_no = trials == self.pulse_no
+        tot_trials = np.arange(0, len(trials))
+        self.trials.append(tot_trials[trial_no])
         self.block.append(block_no)
-        self.trials_all.append(trial_no + 60*block_no)
+        self.trials_all.append(tot_trials[trial_no] + 60*block_no)
 
     def add_info_trials(self, settings_general, no_trials):
         self.settings.add_data(settings_general, no_trials)

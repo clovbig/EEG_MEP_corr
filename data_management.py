@@ -32,13 +32,16 @@ for sub_id in subjects:
                 seq_epochs_emg = loadmat(
                     os.path.join(data_dir, sub_id, 'EMG', tpoint, 'Cleaned Data',
                                  f'TiMeS_{sub_id}_{tpoint}_{seq}_GUI_Results.mat'))
-                trial_pulses = seq_epochs_emg['States']
-                sub_emg_data_sp.add_trials(seq_epochs_emg, trial_pulses, idx_seq)
-                sub_emg_data_sp.add_info_trials(seq_epochs_emg['SettingsGeneral'], len(trial_pulses[trial_pulses == 1]))
-                sub_emg_data_dp.add_trials(seq_epochs_emg, trial_pulses, idx_seq)
-                sub_emg_data_dp.add_info_trials(seq_epochs_emg['SettingsGeneral'], len(trial_pulses[trial_pulses == 2]))
+                trial_pulses = seq_epochs_emg['States'][:, 0]
+                if seq_epochs_emg['AllOriginalDat'].shape[2] == len(trial_pulses):
+                    sub_emg_data_sp.add_trials(seq_epochs_emg, trial_pulses, idx_seq)
+                    sub_emg_data_sp.add_info_trials(seq_epochs_emg['SettingsGeneral'], len(trial_pulses[trial_pulses == 1]))
+                    sub_emg_data_dp.add_trials(seq_epochs_emg, trial_pulses, idx_seq)
+                    sub_emg_data_dp.add_info_trials(seq_epochs_emg['SettingsGeneral'], len(trial_pulses[trial_pulses == 2]))
+                else:
+                    errors_found.append(f'EMG - {sub_id}-{tpoint}-{seq} - different trials number\n')
             except FileNotFoundError:
-                errors_found.append(f'EMG - {sub_id}-{tpoint}-{seq}')
+                errors_found.append(f'EMG - {sub_id}-{tpoint}-{seq} - Missing\n')
             # for idx_t, t in enumerate(trial_pulses):
             #     print(f'trial n. {idx_t}')
             #     if t == 1:
@@ -54,7 +57,7 @@ for sub_id in subjects:
         pickle.dump(sub_emg_data_dp, p_file)
         p_file.close()
 
-    f_name = os.path.join(data_dir, sub_id, 'EMG', 'not_found_files')
+    f_name = os.path.join(data_dir, 'EMG_not_found_files.txt')
     p_file = open(f_name, 'w')
     for item in errors_found:
         p_file.write(item)
